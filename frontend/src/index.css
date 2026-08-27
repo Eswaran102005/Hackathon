@@ -125,7 +125,7 @@ h1, h2, h3, h4, .font-heading {
   }
 }
 
-/* Live Wave Dynamic SVG Animations */
+/* Live Fluid Wave Keyframe Animations */
 @keyframes waveStrokeFlow {
   0% {
     stroke-dashoffset: 400;
@@ -135,23 +135,33 @@ h1, h2, h3, h4, .font-heading {
   }
 }
 
-@keyframes waveGradientGlow {
+@keyframes fluidWaveUndulate {
   0%, 100% {
-    stop-opacity: 0.6;
+    transform: translateY(0px) scaleY(1);
+  }
+  25% {
+    transform: translateY(-4px) scaleY(1.02);
   }
   50% {
-    stop-opacity: 0.25;
+    transform: translateY(2px) scaleY(0.98);
   }
+  75% {
+    transform: translateY(-3px) scaleY(1.01);
+  }
+}
+
+.live-wave-chart svg.recharts-surface {
+  animation: fluidWaveUndulate 3s ease-in-out infinite;
 }
 
 .live-wave-chart .recharts-area-curve {
-  stroke-dasharray: 6 3;
-  animation: waveStrokeFlow 15s linear infinite;
-  filter: drop-shadow(0px 0px 8px rgba(59, 130, 246, 0.5));
+  stroke-dasharray: 12 6;
+  animation: waveStrokeFlow 8s linear infinite;
+  filter: drop-shadow(0px 0px 10px rgba(59, 130, 246, 0.6));
 }
 
 .live-wave-chart .recharts-area-area {
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 /* Utility Animation Classes */
@@ -190,14 +200,6 @@ h1, h2, h3, h4, .font-heading {
   border-radius: 9999px;
   background: currentColor;
   animation: radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-/* Scanline / Command Center Grid Backdrop */
-.cyber-grid {
-  background-size: 30px 30px;
-  background-image: 
-    linear-gradient(to right, rgba(51, 65, 85, 0.15) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(51, 65, 85, 0.15) 1px, transparent 1px);
 }
 
 /* Custom Scrollbars */
