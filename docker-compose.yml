@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: recoverai-postgres
+    environment:
+      POSTGRES_USER: recoverai
+      POSTGRES_PASSWORD: recoveraipassword
+      POSTGRES_DB: recoverai_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recoverai -d recoverai_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: recoverai-backend
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: "postgresql://recoverai:recoveraipassword@postgres:5432/recoverai_db?schema=public"
+      PORT: 5000
+      JWT_SECRET: recoverai_docker_secret_key_2026
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: recoverai-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

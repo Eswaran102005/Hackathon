@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Merchant {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  passwordHash String     @default("$2a$10$YourDefaultHashedPasswordPlaceholder")
+  businessName String
+  createdAt    DateTime   @default(now())
+  customers    Customer[]
+  payments     Payment[]
+}
+
+model Customer {
+  id            String    @id @default(uuid())
+  merchantId    String
+  merchant      Merchant  @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  name          String
+  email         String
+  phone         String
+  lifetimeValue Float     @default(0.0)
+  createdAt     DateTime  @default(now())
+  payments      Payment[]
+}
+
+model Payment {
+  id                String               @id @default(uuid())
+  merchantId        String
+  merchant          Merchant             @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  customerId        String
+  customer          Customer             @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  externalPaymentId String               @unique
+  amount            Float
+  currency          String               @default("INR")
+  paymentMethod     String               // card, upi, netbanking, wallet
+  status            String               // SUCCESS, FAILED, RECOVERING, RECOVERED
+  failureCode       String?
+  failureReason     String?              // insufficient_funds, bank_declined, network_timeout, authentication_failed, card_expired, customer_abandoned, unknown
+  attemptNumber     Int                  @default(1)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  predictions       RecoveryPrediction[]
+  actions           RecoveryAction[]
+  events            RecoveryEvent[]
+  aiMessages        AIMessage[]
+}
+
+model RecoveryPrediction {
+  id                      String   @id @default(uuid())
+  paymentId               String
+  payment                 Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  recoveryProbability     Float
+  expectedRecovery        Float
+  recommendedAction       String
+  recommendedDelayMinutes Int      @default(0)
+  confidence              Float
+  reason                  String
+  modelVersion            String   @default("1.0.0-hybrid")
+  createdAt               DateTime @default(now())
+}
+
+model RecoveryAction {
+  id                    String          @id @default(uuid())
+  paymentId             String
+  payment               Payment         @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  actionType            String          // NO_ACTION, RETRY_NOW, RETRY_LATER, EMAIL, WHATSAPP, PAYMENT_LINK, MANUAL_REVIEW
+  scheduledAt           DateTime
+  executedAt            DateTime?
+  status                String          // SCHEDULED, EXECUTED, CANCELLED, FAILED
+  expectedValue         Float
+  actualRecoveredAmount Float?
+  createdAt             DateTime        @default(now())
+  events                RecoveryEvent[]
+}
+
+model RecoveryEvent {
+  id        String          @id @default(uuid())
+  paymentId String
+  payment   Payment         @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  actionId  String?
+  action    RecoveryAction? @relation(fields: [actionId], references: [id], onDelete: SetNull)
+  eventType String          // PAYMENT_FAILED, PREDICTION_GENERATED, ACTION_SCHEDULED, ACTION_EXECUTED, PAYMENT_RECOVERED, MESSAGE_SENT
+  eventData String          // JSON string representation
+  createdAt DateTime        @default(now())
+}
+
+model AIMessage {
+  id          String   @id @default(uuid())
+  paymentId   String
+  payment     Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  channel     String   // EMAIL, WHATSAPP, SMS
+  message     String
+  generatedBy String   @default("GEMINI") // GEMINI or FALLBACK
+  createdAt   DateTime @default(now())
+}
