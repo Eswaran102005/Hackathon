@@ -125,6 +125,35 @@ h1, h2, h3, h4, .font-heading {
   }
 }
 
+/* Live Wave Dynamic SVG Animations */
+@keyframes waveStrokeFlow {
+  0% {
+    stroke-dashoffset: 400;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes waveGradientGlow {
+  0%, 100% {
+    stop-opacity: 0.6;
+  }
+  50% {
+    stop-opacity: 0.25;
+  }
+}
+
+.live-wave-chart .recharts-area-curve {
+  stroke-dasharray: 6 3;
+  animation: waveStrokeFlow 15s linear infinite;
+  filter: drop-shadow(0px 0px 8px rgba(59, 130, 246, 0.5));
+}
+
+.live-wave-chart .recharts-area-area {
+  transition: all 0.5s ease-in-out;
+}
+
 /* Utility Animation Classes */
 .animate-float {
   animation: floatSlow 6s ease-in-out infinite;

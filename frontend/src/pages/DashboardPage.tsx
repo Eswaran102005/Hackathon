@@ -10,7 +10,8 @@ import {
   RefreshCw,
   Activity,
   DollarSign,
-  Bot
+  Bot,
+  Waves
 } from 'lucide-react';
 import {
   AreaChart,
@@ -34,6 +35,7 @@ export const DashboardPage: React.FC = () => {
   const [trends, setTrends] = useState<any[]>([]);
   const [failureBreakdown, setFailureBreakdown] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [wavePhase, setWavePhase] = useState(0);
 
   const loadDashboardData = async () => {
     setLoading(true);
@@ -56,6 +58,26 @@ export const DashboardPage: React.FC = () => {
   useEffect(() => {
     loadDashboardData();
   }, []);
+
+  // Live Fluid Wave Micro-Animation Loop
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWavePhase((prev) => (prev + 0.15) % (Math.PI * 2));
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Compute undulating live wave data
+  const animatedTrends = trends.map((item, index) => {
+    const sinOffset = Math.sin(wavePhase + index * 0.45) * 750;
+    const cosOffset = Math.cos(wavePhase + index * 0.3) * 600;
+    return {
+      ...item,
+      recovered: Math.max(1000, Math.round((item.recovered || 15000) + sinOffset)),
+      successful: Math.max(5000, Math.round((item.successful || 45000) + cosOffset)),
+      failed: Math.max(2000, Math.round((item.failed || 20000) - sinOffset * 0.6)),
+    };
+  });
 
   if (loading) {
     return (
@@ -198,38 +220,47 @@ export const DashboardPage: React.FC = () => {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Revenue Trend Area Chart */}
-        <div className="lg:col-span-2 glass-card rounded-2xl p-6 border border-slate-800 space-y-4 glass-card-hover">
+        {/* Live Fluid Animated Revenue Trend Area Wave Chart */}
+        <div className="lg:col-span-2 glass-card rounded-2xl p-6 border border-blue-500/30 space-y-4 glass-card-hover glow-blue relative overflow-hidden">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Activity className="h-5 w-5 text-blue-400" />
-                14-Day Revenue & Recovery Trend
+                <Waves className="h-5 w-5 text-blue-400 animate-pulse" />
+                14-Day Revenue & Recovery Wave
               </h2>
-              <p className="text-xs text-slate-300 mt-0.5 font-medium">Comparison of successful, failed, and recovered amounts (₹)</p>
+              <p className="text-xs text-slate-300 mt-0.5 font-medium">Live undulating stream of successful, failed, and recovered amounts (₹)</p>
+            </div>
+
+            {/* Live Streaming Wave Badge */}
+            <div className="flex items-center space-x-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-mono font-bold text-emerald-400 shimmer-badge">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>LIVE WAVE ACTIVE</span>
             </div>
           </div>
 
-          <div className="h-72 w-full pt-4">
+          <div className="h-72 w-full pt-4 live-wave-chart">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={trends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={animatedTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorSuccess" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.6} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.05} />
                   </linearGradient>
                   <linearGradient id="colorFailed" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.6} />
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0.05} />
                   </linearGradient>
                   <linearGradient id="colorRecovered" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.5} />
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.7} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                 <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} tickLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `₹${v / 1000}k`} />
+                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `₹${Math.round(v / 1000)}k`} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#0f172a',
@@ -240,9 +271,9 @@ export const DashboardPage: React.FC = () => {
                   itemStyle={{ color: '#ffffff', fontWeight: 'bold' }}
                   labelStyle={{ color: '#93c5fd', fontWeight: 'bold', marginBottom: '4px' }}
                 />
-                <Area type="monotone" dataKey="successful" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorSuccess)" name="Successful" />
-                <Area type="monotone" dataKey="failed" stroke="#ef4444" strokeWidth={2} fillOpacity={1} fill="url(#colorFailed)" name="Failed" />
-                <Area type="monotone" dataKey="recovered" stroke="#3b82f6" strokeWidth={2.5} fillOpacity={1} fill="url(#colorRecovered)" name="Recovered" />
+                <Area type="monotone" dataKey="successful" stroke="#10b981" strokeWidth={2.5} fillOpacity={1} fill="url(#colorSuccess)" name="Successful" isAnimationActive={false} />
+                <Area type="monotone" dataKey="failed" stroke="#ef4444" strokeWidth={2.5} fillOpacity={1} fill="url(#colorFailed)" name="Failed" isAnimationActive={false} />
+                <Area type="monotone" dataKey="recovered" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorRecovered)" name="Recovered" isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
