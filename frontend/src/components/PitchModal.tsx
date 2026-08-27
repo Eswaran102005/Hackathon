@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle, ArrowRight, Sparkles, AlertCircle, Clock, Zap, CheckCircle2, RefreshCw } from 'lucide-react';
+import { X, CheckCircle, ArrowRight, Sparkles, AlertCircle, Clock, Zap, CheckCircle2, RefreshCw, Bot } from 'lucide-react';
 import { api } from '../services/api';
 
 interface PitchModalProps {
@@ -51,12 +51,14 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-md">
-      <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl space-y-0">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-md animate-fade-in">
+      <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl space-y-0 glow-purple">
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950 px-6 py-4">
           <div className="flex items-center space-x-2.5">
-            <Sparkles className="h-5 w-5 text-blue-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30">
+              <Sparkles className="h-4 w-4 animate-pulse" />
+            </div>
             <h2 className="text-lg font-bold text-white tracking-wide">Live Pitch Flow — RecoverAI Agent Action</h2>
           </div>
           <button onClick={onClose} className="rounded-lg p-1 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
@@ -68,7 +70,9 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
         <div className="p-6 space-y-6">
           {analyzing ? (
             <div className="py-16 text-center space-y-4">
-              <RefreshCw className="h-10 w-10 animate-spin text-blue-500 mx-auto" />
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600/20 border border-blue-500/40 glow-blue animate-pulse mx-auto">
+                <RefreshCw className="h-7 w-7 animate-spin text-blue-400" />
+              </div>
               <div className="text-lg font-extrabold text-white tracking-wide">Analyzing payment failure vector...</div>
               <p className="text-xs font-semibold text-slate-300">Extracting customer history, failure signals, and optimal retry timing...</p>
             </div>
@@ -93,25 +97,25 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
 
               {/* AI Prediction & Strategy Card Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 text-center">
-                  <div className="text-xs font-bold uppercase text-slate-400">Recovery Probability</div>
+                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center glow-emerald">
+                  <div className="text-xs font-bold uppercase text-emerald-400">Recovery Probability</div>
                   <div className="mt-2 text-3xl font-black text-emerald-400">87%</div>
-                  <div className="mt-1 text-[11px] font-semibold text-slate-400">Confidence: 91%</div>
+                  <div className="mt-1 text-[11px] font-semibold text-slate-300">Confidence: 91%</div>
                 </div>
 
-                <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 text-center">
-                  <div className="text-xs font-bold uppercase text-slate-400">Recommended Action</div>
+                <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4 text-center glow-blue">
+                  <div className="text-xs font-bold uppercase text-blue-400">Recommended Action</div>
                   <div className="mt-2 text-base font-black text-blue-400 flex items-center justify-center space-x-1">
                     <Clock className="h-4 w-4" />
                     <span>Retry After 6 Hours</span>
                   </div>
-                  <div className="mt-1 text-[11px] font-semibold text-slate-400">Optimal Liquidity Window</div>
+                  <div className="mt-1 text-[11px] font-semibold text-slate-300">Optimal Liquidity Window</div>
                 </div>
 
-                <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 text-center">
-                  <div className="text-xs font-bold uppercase text-slate-400">Expected Recovery</div>
+                <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-4 text-center glow-purple">
+                  <div className="text-xs font-bold uppercase text-purple-400">Expected Recovery</div>
                   <div className="mt-2 text-2xl font-black text-white">₹4,350</div>
-                  <div className="mt-1 text-[11px] font-semibold text-slate-400">Yield formula: P × Amount</div>
+                  <div className="mt-1 text-[11px] font-semibold text-slate-300">Yield: P × Amount</div>
                 </div>
               </div>
 
@@ -120,7 +124,7 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
                 <div className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Strategy Comparison Matrix</div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-semibold">
                   <div className="rounded-lg bg-slate-900 p-2 text-slate-300">Retry Now: <span className="text-white font-bold">₹3,200</span></div>
-                  <div className="rounded-lg bg-blue-600/25 border border-blue-500/40 p-2 text-blue-300 font-extrabold">Retry 6h: ₹4,350</div>
+                  <div className="rounded-lg bg-blue-600/30 border border-blue-500/50 p-2 text-blue-300 font-extrabold shimmer-badge">Retry 6h: ₹4,350</div>
                   <div className="rounded-lg bg-slate-900 p-2 text-slate-300">WhatsApp: <span className="text-white font-bold">₹3,700</span></div>
                   <div className="rounded-lg bg-slate-900 p-2 text-slate-300">Email: <span className="text-white font-bold">₹2,800</span></div>
                 </div>
@@ -129,7 +133,7 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
               {/* AI Explanation Box */}
               <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4 space-y-2">
                 <div className="flex items-center space-x-2 text-xs font-extrabold text-blue-400 tracking-wide uppercase">
-                  <Sparkles className="h-3.5 w-3.5" />
+                  <Bot className="h-3.5 w-3.5 animate-pulse" />
                   <span>Gemini AI Rationale Explanation</span>
                 </div>
                 <p className="text-xs text-slate-200 leading-relaxed font-medium italic">
@@ -142,7 +146,7 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
                 <button
                   onClick={handleApprove}
                   disabled={loading}
-                  className="w-full flex items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 text-base font-extrabold text-white shadow-lg shadow-blue-600/30 hover:from-blue-500 hover:to-indigo-500 transition-all disabled:opacity-50"
+                  className="w-full flex items-center justify-center space-x-2 rounded-xl shimmer-btn px-6 py-3.5 text-base font-extrabold text-white shadow-xl shadow-blue-600/40 hover:shadow-blue-500/60 transition-all disabled:opacity-50"
                 >
                   {loading ? (
                     <span>Scheduling Recovery...</span>
@@ -158,8 +162,8 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
           ) : step === 'SCHEDULED' ? (
             <>
               {/* Scheduled Confirmation State */}
-              <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 p-6 space-y-4 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/40">
+              <div className="rounded-2xl border border-blue-500/40 bg-blue-500/10 p-6 space-y-4 text-center glow-blue">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/40 animate-pulse">
                   <Clock className="h-8 w-8" />
                 </div>
                 <div>
@@ -184,13 +188,13 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
                   <button
                     onClick={handleSimulateSuccess}
                     disabled={loading}
-                    className="w-full flex items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3.5 text-base font-extrabold text-white shadow-lg shadow-emerald-600/30 hover:from-emerald-500 hover:to-teal-500 transition-all disabled:opacity-50"
+                    className="w-full flex items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3.5 text-base font-extrabold text-white shadow-xl shadow-emerald-600/40 hover:from-emerald-500 hover:to-teal-500 transition-all disabled:opacity-50"
                   >
                     {loading ? (
                       <span>Executing Recovery Simulation...</span>
                     ) : (
                       <>
-                        <Zap className="h-5 w-5" />
+                        <Zap className="h-5 w-5 fill-current" />
                         <span>Simulate Successful Recovery</span>
                       </>
                     )}
@@ -200,11 +204,11 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
             </>
           ) : (
             <div className="py-8 text-center space-y-4">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
-                <CheckCircle2 className="h-10 w-10 animate-bounce" />
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 glow-emerald">
+                <CheckCircle2 className="h-10 w-10 animate-bounce text-emerald-400" />
               </div>
               <div>
-                <span className="rounded-full bg-emerald-500/20 px-3.5 py-1 text-xs font-black text-emerald-400 border border-emerald-500/40 uppercase tracking-wider">
+                <span className="rounded-full bg-emerald-500/20 px-3.5 py-1 text-xs font-black text-emerald-400 border border-emerald-500/40 uppercase tracking-wider shimmer-badge">
                   PAYMENT RECOVERED
                 </span>
                 <h3 className="text-3xl font-black text-white mt-2">₹5,000</h3>
@@ -213,14 +217,14 @@ export const PitchModal: React.FC<PitchModalProps> = ({ data, onClose, onRefresh
                 </p>
               </div>
 
-              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 max-w-md mx-auto text-xs text-emerald-300 font-bold">
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 max-w-md mx-auto text-xs text-emerald-300 font-bold glow-emerald">
                 Dashboard Metrics Updated: <span className="font-black text-white">+₹5,000</span> added to Simulated Recovered Revenue!
               </div>
 
               <div className="pt-4">
                 <button
                   onClick={onClose}
-                  className="rounded-xl bg-blue-600 px-6 py-3 text-xs font-extrabold text-white hover:bg-blue-500 transition-all shadow-md shadow-blue-600/30"
+                  className="rounded-xl bg-blue-600 px-6 py-3 text-xs font-extrabold text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/40"
                 >
                   Return to Dashboard
                 </button>
