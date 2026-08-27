@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { AIScoringService } from '../services/aiScoringService.js';
-import { StrategyEngine } from '../services/strategyEngine.js';
+import { AIScoringService } from '../services/aiScoringService';
+import { StrategyEngine } from '../services/strategyEngine';
 
 describe('RecoverAI Strategy & Scoring Engine Unit Tests', () => {
   it('should compute high recovery probability for transient network timeout', () => {

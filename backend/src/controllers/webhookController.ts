@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { MockPaymentProvider } from '../services/paymentProvider.js';
+import { MockPaymentProvider } from '../services/paymentProvider';
 
 const prisma = new PrismaClient();
 const paymentProvider = new MockPaymentProvider(prisma);

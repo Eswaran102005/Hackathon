@@ -43,7 +43,7 @@ export const App: React.FC = () => {
 
   return (
     <Router
-      basename={(import.meta as any).env?.BASE_URL || '/Hackathon/'}
+      basename={(import.meta as any).env?.BASE_URL || '/'}
       future={{
         v7_startTransition: true,
         v7_relativeSplatPath: true,
