@@ -41,9 +41,15 @@ export const App: React.FC = () => {
     }
   };
 
+  const getBasename = () => {
+    const raw = (import.meta as any).env?.BASE_URL;
+    if (!raw || raw === './' || raw === '/') return undefined;
+    return raw;
+  };
+
   return (
     <Router
-      basename={(import.meta as any).env?.BASE_URL || '/'}
+      basename={getBasename()}
       future={{
         v7_startTransition: true,
         v7_relativeSplatPath: true,
